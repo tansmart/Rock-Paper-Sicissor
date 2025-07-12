@@ -1,4 +1,4 @@
-# Rock-Paper-Sicissor
+# Rock Paper Sicissor
 Rock Paper Sicissors.
 # Rock Paper Scissors
 
