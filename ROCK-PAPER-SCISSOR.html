@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rock Paper Scissors</title>
+    <style>
+        body {
+            font-family: 'Orbitron', sans-serif;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background: linear-gradient(-45deg, #0f2027, #203a43, #2c5364, #1a1a1a);
+            background-size: 400% 400%;
+            animation: gradientBG 10s ease infinite;
+            color: #fff;
+            overflow: hidden;
+        }
+
+        @keyframes gradientBG {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        h1 {
+            font-size: 3rem;
+            color: #fff;
+            text-shadow: 0 0 20px #ff007f, 0 0 40px #00b7ff;
+            margin-bottom: 10px;
+            animation: glow 2s ease-in-out infinite alternate;
+        }
+
+        @keyframes glow {
+            0% { text-shadow: 0 0 15px #ff007f, 0 0 30px #ff007f; }
+            100% { text-shadow: 0 0 30px #00b7ff, 0 0 50px #ff007f; }
+        }
+
+        .container {
+            background: rgba(0, 0, 0, 0.6);
+            padding: 40px;
+            border-radius: 20px;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.6);
+            text-align: center;
+            transition: all 0.6s ease;
+        }
+
+        input[type="text"] {
+            width: 80%;
+            padding: 12px;
+            border: none;
+            border-radius: 10px;
+            font-size: 1.1rem;
+            margin: 15px 0;
+            text-align: center;
+            background: #1a1a1a;
+            color: #fff;
+            outline: 2px solid #00d9ff;
+        }
+
+        .btn {
+            padding: 12px 25px;
+            margin: 10px;
+            font-size: 1.1rem;
+            border: none;
+            border-radius: 30px;
+            background: linear-gradient(90deg, #ff6200, #00b7ff);
+            color: #fff;
+            cursor: pointer;
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+
+        .btn:hover {
+            transform: scale(1.1);
+            box-shadow: 0 0 20px #00b7ff;
+        }
+
+        .hidden {
+            opacity: 0;
+            pointer-events: none;
+            transform: scale(0.9);
+        }
+
+        .visible {
+            opacity: 1;
+            pointer-events: all;
+            transform: scale(1);
+        }
+
+        .choices button {
+            padding: 15px 30px;
+            font-size: 1.2rem;
+            margin: 10px;
+            border-radius: 50px;
+            border: 2px solid #fff;
+            background: transparent;
+            color: #fff;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .choices button:hover {
+            background: #ff007f;
+            border-color: #00b7ff;
+        }
+
+        .result, .score, .computer-choice {
+            margin-top: 20px;
+            font-size: 1.5rem;
+            animation: fadeIn 1s forwards;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .reset-btn {
+            margin-top: 25px;
+            background: #ff007f;
+        }
+    </style>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div id="loginPage" class="container visible">
+        <h1>Rock Paper Scissors</h1>
+        <p>Enter your name to start:</p>
+        <input type="text" id="username" placeholder="Your Name">
+        <button class="btn" onclick="login()">Start Game</button>
+    </div>
+
+    <div id="gamePage" class="container hidden">
+        <h1 id="welcomeMessage">Welcome, Player!</h1>
+        <p>Choose your move:</p>
+        <div class="choices">
+            <button onclick="playGame('rock')">✊ Rock</button>
+            <button onclick="playGame('paper')">✋ Paper</button>
+            <button onclick="playGame('scissors')">✌️ Scissors</button>
+        </div>
+        <div id="computerChoice" class="computer-choice"></div>
+        <div id="result" class="result">Make your move!</div>
+        <div id="score" class="score">Player: 0 | Computer: 0</div>
+        <button class="btn reset-btn" onclick="resetGame()">Reset Game</button>
+    </div>
+
+    <script>
+        let playerScore = 0;
+        let computerScore = 0;
+        let playerName = "";
+
+        const loginPage = document.getElementById('loginPage');
+        const gamePage = document.getElementById('gamePage');
+        const welcomeMessage = document.getElementById('welcomeMessage');
+        const resultDiv = document.getElementById('result');
+        const scoreDiv = document.getElementById('score');
+        const computerChoiceDiv = document.getElementById('computerChoice');
+
+        const login = () => {
+            playerName = document.getElementById('username').value.trim();
+            if (playerName) {
+                welcomeMessage.textContent = `Welcome, ${playerName}!`;
+                loginPage.classList.add('hidden');
+                loginPage.classList.remove('visible');
+                setTimeout(() => {
+                    gamePage.classList.remove('hidden');
+                    gamePage.classList.add('visible');
+                }, 500);
+            } else {
+                alert('Please enter your name!');
+            }
+        };
+
+        const playGame = (playerChoice) => {
+            const choices = ['rock', 'paper', 'scissors'];
+            const emojis = { rock: '✊', paper: '✋', scissors: '✌️' };
+            const computerChoice = choices[Math.floor(Math.random() * 3)];
+
+            computerChoiceDiv.textContent = `Computer chose: ${emojis[computerChoice]}`;
+
+            if (playerChoice === computerChoice) {
+                resultDiv.textContent = `🤝 It's a Tie!`;
+            } else if (
+                (playerChoice === 'rock' && computerChoice === 'scissors') ||
+                (playerChoice === 'paper' && computerChoice === 'rock') ||
+                (playerChoice === 'scissors' && computerChoice === 'paper')
+            ) {
+                playerScore++;
+                resultDiv.textContent = `🎉 You Win! ${emojis[playerChoice]} beats ${emojis[computerChoice]}`;
+            } else {
+                computerScore++;
+                resultDiv.textContent = `😢 You Lose! ${emojis[computerChoice]} beats ${emojis[playerChoice]}`;
+            }
+
+            scoreDiv.textContent = `Player: ${playerScore} | Computer: ${computerScore}`;
+
+            if (playerScore === 5 || computerScore === 5) {
+                setTimeout(() => {
+                    alert(playerScore === 5 ? `${playerName} Wins the Match! 🏆` : `Computer Wins the Match! 🤖`);
+                    resetGame();
+                }, 500);
+            }
+        };
+
+        const resetGame = () => {
+            playerScore = 0;
+            computerScore = 0;
+            resultDiv.textContent = "Make your move!";
+            scoreDiv.textContent = `Player: ${playerScore} | Computer: ${computerScore}`;
+            computerChoiceDiv.textContent = "";
+        };
+    </script>
+</body>
+</html>
